@@ -1,4 +1,4 @@
-const socket = new WebSocket("ws://localhost:8080/ws");
+const socket = new WebSocket("ws://46.202.178.139:8080/ws");
 const videosDiv = document.getElementById('videos');
 const localVideoElement = document.getElementById('localVideo');
 const joinRoomBtn = document.getElementById('joinRoomBtn');
