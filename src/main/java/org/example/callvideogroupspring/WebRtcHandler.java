@@ -5,13 +5,13 @@ import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 class WebRtcHandler extends TextWebSocketHandler {
     private static final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final Map<String, Set<WebSocketSession>> rooms = new ConcurrentHashMap<>();
     private final Object sendLock = new Object();
 
     @Override
@@ -32,8 +32,25 @@ class WebRtcHandler extends TextWebSocketHandler {
         }
 
         switch (action) {
+            case "create-room":
+                String roomId = UUID.randomUUID().toString();
+                rooms.put(roomId, new HashSet<>());
+                rooms.get(roomId).add(session);
+                sendTo(session.getId(), "room-created", roomId, "server");
+                break;
             case "join":
-                broadcast(session.getId(), data.getOrDefault("roomId", ""), "new-user", session.getId());
+                String joinRoomId = data.get("roomId");
+                if (joinRoomId != null && rooms.containsKey(joinRoomId)) {
+                    if (rooms.get(joinRoomId).contains(session)) {
+                        sendTo(session.getId(), "error", "You are already in the room", "server");
+                        return;
+                    }
+                    rooms.values().forEach(s -> s.remove(session.getId()));
+                    rooms.get(joinRoomId).add(session);
+                    broadcast(session.getId(), data.getOrDefault("roomId", ""), "new-user", session.getId());
+                } else {
+                    sendTo(session.getId(), "error", "Room not found", "server");
+                }
                 break;
             case "offer":
                 sendTo(data.get("to"), "offer", data.get("data"), session.getId());
@@ -50,6 +67,7 @@ class WebRtcHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws IOException {
         sessions.remove(session.getId());
+        rooms.values().forEach(room -> room.remove(session));
         broadcast(session.getId(), "", "user-disconnected", session.getId());
     }
 
@@ -72,20 +90,30 @@ class WebRtcHandler extends TextWebSocketHandler {
             }
         }
     }
-
     private void broadcast(String from, String roomId, String action, String data) throws IOException {
-        for (WebSocketSession session : sessions.values()) {
-            if (!session.getId().equals(from) && session.isOpen()) {
-                Map<String, Object> message = new HashMap<>();
-                message.put("action", action);
-                message.put("data", data);
-                message.put("from", from);
-                String jsonMessage = objectMapper.writeValueAsString(message);
+        if (roomId == null || !rooms.containsKey(roomId)) return;
 
-                session.sendMessage(new TextMessage(jsonMessage));
+        Set<WebSocketSession> roomSessions = rooms.get(roomId); // Lấy danh sách người trong phòng
+        if (roomSessions == null) return;
+
+        for (WebSocketSession session : roomSessions) {
+            if (!session.getId().equals(from) && session.isOpen()) {
+                try {
+                    Map<String, Object> message = new HashMap<>();
+                    message.put("action", action);
+                    message.put("data", data);
+                    message.put("from", from);
+                    String jsonMessage = objectMapper.writeValueAsString(message);
+
+                    session.sendMessage(new TextMessage(jsonMessage));
+                } catch (IOException e) {
+                    System.err.println("Lỗi khi gửi tin nhắn: " + e.getMessage());
+                    session.close(); // Đóng session nếu gặp lỗi
+                }
             }
         }
     }
+
 
     private Map<String, String> parseJson(String json) {
         try {

@@ -8,18 +8,23 @@
 </head>
 
 <body>
-<h1>Group Call</h1>
-<div id="my-video">
-    <h2>Your Video</h2>
-    <video id="localVideo" autoplay muted></video>
-</div>
 <div>
-    <label for="roomIdInput">Enter Room ID: </label>
-    <input type="text" id="roomIdInput" placeholder="Enter Room ID" />
-    <button id="joinRoomBtn">Join Room</button>
+    <h1>Group Call</h1>
+    <div id="my-video">
+        <div>
+            <button id="createRoomBtn">Create Room</button>
+        </div>
+        <p id="roomDisplay"></p>
+        <video id="localVideo" autoplay muted></video>
+    </div>
+    <div>
+        <label for="roomIdInput">Enter Room ID: </label>
+        <input type="text" id="roomIdInput" placeholder="Enter Room ID" />
+        <button id="joinRoomBtn">Join Room</button>
+    </div>
+    <h2>Participants</h2>
+    <div id="videos"></div>
 </div>
-<h2>Participants</h2>
-<div id="videos"></div>
 
 <script src="./script.js"></script>
 </body>

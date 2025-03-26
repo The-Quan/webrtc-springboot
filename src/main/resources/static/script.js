@@ -1,8 +1,12 @@
+// const socket = new WebSocket("ws://localhost:8080/ws");
 const socket = new WebSocket("wss://46.202.178.139:8080/ws");
 const videosDiv = document.getElementById('videos');
 const localVideoElement = document.getElementById('localVideo');
 const joinRoomBtn = document.getElementById('joinRoomBtn');
 const roomIdInput = document.getElementById('roomIdInput');
+const createRoomBtn = document.getElementById('createRoomBtn');
+const roomDisplay = document.getElementById('roomDisplay');
+
 
 let localStream;
 let peerConnections = {};
@@ -12,6 +16,11 @@ async function getLocalStream() {
     localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     localVideoElement.srcObject = localStream;
 }
+
+createRoomBtn.onclick = () => {
+    socket.send(JSON.stringify({ type: 'create-room' }));
+};
+
 
 joinRoomBtn.onclick = () => {
     roomId = roomIdInput.value.trim();
@@ -31,6 +40,13 @@ socket.onmessage = async (event) => {
 
 
     switch (action) {
+        case 'error':
+            window.alert(data)
+            break;
+        case 'room-created':
+            roomId = data;
+            roomDisplay.innerText = `Room ID: ${roomId}`;
+            break;
         case 'new-user':
             createPeerConnection(from);
             sendOffer(from);
