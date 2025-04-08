@@ -76,7 +76,13 @@ socket.onmessage = async (event) => {
 };
 
 function createPeerConnection(userId, username) {
-    const peerConnection = new RTCPeerConnection();
+    const configuration = {
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' }
+        ]
+    };
+
+    const peerConnection = new RTCPeerConnection(configuration);
 
     localStream.getTracks().forEach(track => {
         peerConnection.addTrack(track, localStream);
