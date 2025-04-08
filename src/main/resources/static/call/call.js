@@ -78,7 +78,25 @@ socket.onmessage = async (event) => {
 function createPeerConnection(userId, username) {
     const configuration = {
         iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' }
+            { urls: 'stun:stun.l.google.com:19302' },
+            {
+                urls: "stun:global.stun.twilio.com:3478"
+            },
+            {
+                urls: "turn:global.turn.twilio.com:3478?transport=udp",
+                username: "3df2e813c29ceaa964fb879d8e23989e12ec987a078c50be42bdc62076bdf936",
+                credential: "r2DD1jt8tB124DJGJamHnguR3sveiRiLbrRmZBIQjow="
+            },
+            {
+                urls: "turn:global.turn.twilio.com:3478?transport=tcp",
+                username: "3df2e813c29ceaa964fb879d8e23989e12ec987a078c50be42bdc62076bdf936",
+                credential: "r2DD1jt8tB124DJGJamHnguR3sveiRiLbrRmZBIQjow="
+            },
+            {
+                urls: "turn:global.turn.twilio.com:443?transport=tcp",
+                username: "3df2e813c29ceaa964fb879d8e23989e12ec987a078c50be42bdc62076bdf936",
+                credential: "r2DD1jt8tB124DJGJamHnguR3sveiRiLbrRmZBIQjow="
+            }
         ]
     };
 
