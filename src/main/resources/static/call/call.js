@@ -1,5 +1,5 @@
 // const socket = new WebSocket("ws://localhost:8080/ws/call");
-const socket = new WebSocket("wss://46.202.178.139:8080/ws/call");
+const socket = new WebSocket("wss://46.202.178.139:9999/ws/call");
 const videosDiv = document.getElementById('videos');
 const localVideoElement = document.getElementById('localVideo');
 const joinRoomBtn = document.getElementById('joinRoomBtn');

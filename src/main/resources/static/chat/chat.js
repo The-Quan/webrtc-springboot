@@ -1,5 +1,5 @@
 // const socket = new WebSocket("ws://localhost:8080/ws/chat");
-const socket = new WebSocket("wss://46.202.178.139:8080/ws/chat");
+const socket = new WebSocket("wss://46.202.178.139:9999/ws/chat");
 
 const joinRoomBtn = document.getElementById('joinRoomBtn');
 const roomIdInput = document.getElementById('roomIdInput');
