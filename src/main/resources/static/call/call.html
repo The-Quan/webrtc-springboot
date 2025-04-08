@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Group Call</title>
+</head>
+
+<body>
+<div>
+    <h1>Group Call</h1>
+    <div id="my-video">
+        <div>
+            <br>
+            <input type="text" id="nameInput" placeholder="Enter Name" />
+        </div>
+        <br>
+        <div>
+            <label for="roomTypeSelect">Room Type:</label>
+            <select id="roomTypeSelect">
+                <option value="group">Group</option>
+                <option value="1v1">1:1</option>
+            </select>
+        </div>
+        <br>
+        <div>
+            <button id="createRoomBtn">Create Room</button>
+        </div>
+        <br>
+        <div>
+            <label for="roomIdInput">Enter Room ID: </label>
+            <input type="text" id="roomIdInput" placeholder="Enter Room ID"/>
+            <button id="joinRoomBtn">Join Room</button>
+        </div>
+        <br>
+        <p id="roomDisplay"></p>
+        <video id="localVideo" autoplay muted></video>
+    </div>
+    <h2>Participants</h2>
+    <div id="videos"></div>
+</div>
+
+<script src="call.js"></script>
+</body>
+
+</html>
